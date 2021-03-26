@@ -140,11 +140,13 @@ pub fn _print(args: fmt::Arguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
 
+/// Tests that printing a line to the VGA buffer does not panic.
 #[test_case]
 fn test_println_simple() {
     println!("test_println_simple output");
 }
 
+/// Tests that printing multiple lines to the VGA buffer does not panic.
 #[test_case]
 fn test_println_many() {
     for _ in 0..200 {
@@ -152,6 +154,8 @@ fn test_println_many() {
     }
 }
 
+/// Uses the wrapped macros to print to VGA buffer directly, then checks that
+/// the updates were made in the buffer.
 #[test_case]
 fn test_println_output() {
     let s = "some test string that fits on a single line";

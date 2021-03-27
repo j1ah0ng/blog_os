@@ -1,0 +1,21 @@
+language: rust
+rust: nightly
+os: linux
+dist: bionic
+compiler: gcc
+cache: cargo
+
+addons:
+    apt:
+        packages:
+            - qemu-system-x86
+
+before_script:
+  - rustup override set nightly
+  - rustup component add rust-src llvm-tools-preview
+  - cargo install bootimage
+
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+  - cargo test --lib --verbose

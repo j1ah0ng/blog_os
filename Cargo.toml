@@ -5,6 +5,10 @@ authors = ["Jiahong Long <jiahong888long@gmail.com>"]
 edition = "2018"
 
 [[test]]
+name = "stack_overflow"
+harness = false
+
+[[test]]
 name = "should_panic"
 harness = false
 

@@ -17,7 +17,7 @@ static HELLO: &[u8] = b"Hello World!";
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    blog_os::hlt_loop();
 }
 /// Called on panic, during normal runtime.
 #[cfg(test)]
@@ -36,7 +36,15 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    loop {}
+    println!("It didn't crash.");
+
+    loop {
+        use blog_os::print;
+        for _ in 1..10000 {}
+        print!("-");
+    }
+
+    blog_os::hlt_loop();
 }
 
 #[test_case]

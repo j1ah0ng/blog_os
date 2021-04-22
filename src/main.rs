@@ -7,7 +7,35 @@
 mod vga_buffer;
 mod serial;
 
+use bootloader::{BootInfo, entry_point};
 use core::panic::PanicInfo;
+
+entry_point!(kernel_main);
+
+/// Entry point
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
+    use blog_os::memory::active_level_4_table;
+    use x86_64::VirtAddr;
+
+    println!("Hello World{}", "!");
+    blog_os::init();
+
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let l4_table = unsafe { active_level_4_table(phys_mem_offset) };
+
+    for (i, entry) in l4_table.iter().enumerate() {
+        if !entry.is_unused() {
+            println!("L4 Entry {} : {:?}", i, entry);
+        }
+    }
+
+    use x86_64::registers::control::Cr3;
+
+    #[cfg(test)]
+    test_main();
+
+    blog_os::hlt_loop();
+}
 
 #[allow(dead_code)]
 static HELLO: &[u8] = b"Hello World!";
@@ -24,24 +52,6 @@ fn panic(info: &PanicInfo) -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     blog_os::test_panic_handler(info);
-}
-
-/// Entry point
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
-
-    blog_os::init();
-
-    use x86_64::registers::control::Cr3;
-
-    let (level_4_page_table, _) = Cr3::read();
-    println!("Level 4 page table at {:?}", level_4_page_table.start_address());
-
-    #[cfg(test)]
-    test_main();
-
-    blog_os::hlt_loop();
 }
 
 #[test_case]

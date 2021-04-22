@@ -1,1 +1,5 @@
 /target
+/whitepaper/*.aux
+/whitepaper/*.fls
+/whitepaper/*.log
+/whitepaper/*.fdb_latexmk
